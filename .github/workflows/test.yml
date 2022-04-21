@@ -1,0 +1,44 @@
+name: Tests
+on: [push, pull_request]
+jobs:
+  automated-tests:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: ['ubuntu-latest']
+        php-versions: ['7.2',"7.3","7.4"]
+        phpunit-versions: ['latest']
+    services:
+      mysql:
+      image: mysql:latest
+      env:
+        MYSQL_DATABASE: ca_test
+        MYSQL_HOST: 127.0.0.1
+        MYSQL_USER: ca_test
+        MYSQL_PASSWORD: password
+        MYSQL_ROOT_PASSWORD: rootpass
+      ports:
+        - 3306:3306
+      options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      
+    name: PHP ${{ matrix.php }} test
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup PHP
+        uses: nanasess/setup-php@v3
+        with:
+          php-version: ${{ matrix.php }}
+      - name: Database setup
+        run: tests/database_setup.sh
+      - name: install
+        run: 
+          - export PROFILE=${PROFILE:-testing}
+          - ln -s .travis.setup.php setup.php
+          - tests/update_dependencies.sh
+          - tests/profile_setup.sh "$PROFILE"
+      - name: test
+        run:
+          - cd tests/
+          - phpunit
+        
+        
