@@ -30,8 +30,6 @@ jobs:
         uses: nanasess/setup-php@v3
         with:
           php-version: ${{ matrix.php }}
-      - name: Database setup
-        run: tests/database_setup.sh
       - name: install
         run: | 
           export PROFILE=${PROFILE:-testing}
