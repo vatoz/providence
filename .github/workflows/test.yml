@@ -31,14 +31,14 @@ jobs:
       - name: Database setup
         run: tests/database_setup.sh
       - name: install
-        run: 
-          - export PROFILE=${PROFILE:-testing}
-          - ln -s .travis.setup.php setup.php
-          - tests/update_dependencies.sh
-          - tests/profile_setup.sh "$PROFILE"
+        run: | 
+          export PROFILE=${PROFILE:-testing}
+          ln -s .travis.setup.php setup.php
+          tests/update_dependencies.sh
+          tests/profile_setup.sh "$PROFILE"
       - name: test
-        run:
-          - cd tests/
-          - phpunit
+        run: |
+          cd tests/
+          phpunit
         
         
